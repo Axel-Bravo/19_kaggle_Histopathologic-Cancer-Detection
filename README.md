@@ -1,36 +1,23 @@
-# Skin Cancer 
+# Histopathologic Cancer Detection
 ## Overview
 
-Another more interesting than digit classification dataset to use to get biology and medicine students more excited
-about machine learning and image processing.
+In this competition, you must create an algorithm to identify metastatic cancer in small image patches taken from larger digital pathology scans. The data for this competition is a slightly modified version of the PatchCamelyon (PCam) benchmark dataset (the original PCam dataset contains duplicate images due to its probabilistic sampling, however, the version presented on Kaggle does not contain duplicates).
 
-Original Data Source
+PCam is highly interesting for both its size, simplicity to get started on, and approachability. In the authors' words:
 
-    https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/DBW86T
-    Tschandl, P., Rosendahl, C. & Kittler, H. The HAM10000 dataset, a large collection of multi-source dermatoscopic 
-    images of common pigmented skin lesions. Sci. Data 5, 180161 (2018). doi: 10.1038/sdata.2018.161
+`[PCam] packs the clinically-relevant task of metastasis detection into a straight-forward binary image classification task, akin to CIFAR-10 and MNIST. Models can easily be trained on a single GPU in a couple hours, and achieve competitive scores in the Camelyon16 tasks of tumor detection and whole-slide image diagnosis. Furthermore, the balance between task-difficulty and tractability makes it a prime suspect for fundamental machine learning research on topics as active learning, model uncertainty, and explainability.`
 
-
-Training of neural networks for automated diagnosis of pigmented skin lesions is hampered by the small
-size and lack of diversity of available dataset of dermatoscopic images. We tackle this problem by releasing 
-the HAM10000 ("Human Against Machine with 10000 training images") dataset. We collected dermatoscopic images 
-from different populations, acquired and stored by different modalities. The final dataset consists of 10015 
-dermatoscopic images which can serve as a training set for academic machine learning purposes.
 
 ## Data 
-Cases include a representative collection of all important diagnostic categories in the realm of pigmented 
-lesions: 
-- Actinic keratoses and intraepithelial carcinoma / Bowen's disease (akiec)
-- Basal cell carcinoma (bcc)
-- Benign keratosis-like lesions (solar lentigines / seborrheic keratoses and lichen-planus like keratoses
-- bkl
-- Dermatofibroma (df)
-- Melanoma (mel)
-- Melanocytic nevi (nv) and vascular lesions (angiomas, angiokeratomas, pyogenic granulomas and hemorrhage, vasc).
+In this dataset, you are provided with a large number of small pathology images to classify. Files are named with an image `id`. The `train_labels.csv` file provides the ground truth for the images in the `train` folder. You are predicting the labels for the images in the `test` folder. A positive label indicates that the center 32x32px region of a patch contains at least one pixel of tumor tissue. Tumor tissue in the outer region of the patch does not influence the label. This outer region is provided to enable fully-convolutional models that do not use zero-padding, to ensure consistent behavior when applied to a whole-slide image.
 
-More than 50% of lesions are confirmed through histopathology (histo), the ground truth for the rest of the
-cases is either follow-up examination (follow_up), expert consensus (consensus), or confirmation by in-vivo
-confocal microscopy (confocal). The dataset includes lesions with multiple images, which can be tracked by
-the lesion_id-column within the HAM10000_metadata file.
+The original PCam dataset contains duplicate images due to its probabilistic sampling, however, the version presented on Kaggle does not contain duplicates. We have otherwise maintained the same data and splits as the PCam benchmark.
+
+
+## Evaluation
+Submissions are evaluated on [area under the ROC curve](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) between the predicted probability and the observed target.
+
 
 ## Code
+_Code is under development. Bear in mind!_ To facilitated reproducibility, the file `package-list-txt` contains a list of all the packages present in the conda environment used for the challenge.
+
