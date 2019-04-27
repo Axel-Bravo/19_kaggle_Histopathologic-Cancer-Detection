@@ -130,6 +130,3 @@ dmypy.json
 # Pycharm
 .idea/
 /data
-
-#DVC
-.dvc/config
