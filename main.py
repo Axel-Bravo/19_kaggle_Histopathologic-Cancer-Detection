@@ -10,7 +10,7 @@ train_datagen = ImageDataGenerator(
         rescale=1./255,
         rotation_range=40,
         horizontal_flip=True,
-        validation_split=0.2)
+        validation_split=0.1)
 
 train_generator = train_datagen.flow_from_directory(
         train_dir,
@@ -44,18 +44,21 @@ model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accurac
 model.summary()
 
 #%% Model - Training
-n_epochs = 10
+n_epochs = 20
 batch_size = 128
 
-early_stop = EarlyStopping(monitor='val_loss', min_delta=0.05, patience=4, verbose=1)
-reduce_lr = ReduceLROnPlateau(monitor='val_loss', min_delta=0.05, patience=2, min_lr=0.001, factor=0.5, verbose=1)
-model_checker = ModelCheckpoint(filepath='models/', monitor='val_accuracy', save_best_only=True,
+early_stop = callbacks.EarlyStopping(monitor='val_loss', min_delta=0.05, patience=4, verbose=1)
+reduce_lr = callbacks.ReduceLROnPlateau(monitor='val_loss', min_delta=0.05, patience=2, min_lr=0.001,
+                                        factor=0.5, verbose=1)
+model_checker = callbacks.ModelCheckpoint(filepath='models/', monitor='val_accuracy', save_best_only=True,
                                 save_weights_only=True)
-tensorboard = TensorBoard(log_dir='logs/')  # tensorboard --logdir=logs/
+tensorboard = callbacks.TensorBoard(log_dir='logs/')  # tensorboard --logdir=logs/
 
 model.fit_generator(train_generator, steps_per_epoch=train_generator.samples // batch_size,
                     validation_data=validation_generator,
                     validation_steps=validation_generator.samples // batch_size,
                     epochs=n_epochs,
-                    callbacks=[early_stop, reduce_lr, model_checker, tensorboard])
+                    callbacks=[early_stop, reduce_lr, model_checker, tensorboard],
+                    workers=15,
+                    use_multiprocessing=True)
 
