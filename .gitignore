@@ -134,3 +134,6 @@ dmypy.json
 #Tensorflow
 logs/
 models/
+
+#Other
+credentials/
