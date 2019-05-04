@@ -1,58 +1,84 @@
-#%% Imports and functions
-from tensorflow.keras import callbacks, layers, models
+# %% Imports and functions
+import subprocess
+import numpy as np
+import pandas as pd
+from tensorflow.keras import callbacks, layers, models, optimizers
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
+# %% Data pre-processing
+train_dir = "data/train/"
+test_dir = "data/test/"
 
-#%% Data pre-processing
-train_dir ="data/train_type/"
+# Parameters
+batch_size = 64
+input_dimension = (32, 32)
+model = 'model_01'
 
+# Train/Val
 train_datagen = ImageDataGenerator(
-        rescale=1./255,
-        rotation_range=40,
-        horizontal_flip=True,
-        validation_split=0.1)
+    rescale=1. / 255,
+    rotation_range=40,
+    horizontal_flip=True,
+    validation_split=0.1)
 
 train_generator = train_datagen.flow_from_directory(
-        train_dir,
-        target_size=(32, 32),
-        color_mode="rgb",
-        batch_size=64,
-        class_mode='categorical',
-        subset='training')
+    train_dir,
+    target_size=input_dimension,
+    color_mode="rgb",
+    batch_size=batch_size,
+    class_mode='categorical',
+    subset='training')
 
 validation_generator = train_datagen.flow_from_directory(
-        train_dir,
-        target_size=(32, 32),
-        color_mode="rgb",
-        batch_size=64,
-        class_mode='categorical',
-        subset='validation')
+    train_dir,
+    target_size=input_dimension,
+    color_mode="rgb",
+    batch_size=batch_size,
+    class_mode='categorical',
+    subset='validation')
 
-#%% Model - Definition
+# Test
+test_datagen = ImageDataGenerator(rescale=1. / 255)
+
+test_generator = test_datagen.flow_from_directory(
+    test_dir,
+    target_size=input_dimension,
+    color_mode="rgb",
+    shuffle=False,
+    batch_size=2)
+
+#test_generator.reset()
+
+# %% Model - Initialization
+
+# Definition
 model = models.Sequential()
 model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)))
 model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Conv2D(32, (3, 3), activation='relu'))
 model.add(layers.MaxPooling2D((2, 2)))
-model.add(layers.Conv2D(32, (3, 3), activation='relu'))
 model.add(layers.Flatten())
 model.add(layers.Dense(64, activation='relu'))
-model.add(layers.Dropout(0.25))
+model.add(layers.Dropout(0.3))
 model.add(layers.Dense(12, activation='relu'))
 model.add(layers.Dense(2, activation='softmax'))
-model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
 model.summary()
 
-#%% Model - Training
-n_epochs = 20
-batch_size = 128
+# Compile
+optimizer = optimizers.RMSprop(learning_rate=0.001)
+model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
-early_stop = callbacks.EarlyStopping(monitor='val_loss', min_delta=0.05, patience=4, verbose=1)
-reduce_lr = callbacks.ReduceLROnPlateau(monitor='val_loss', min_delta=0.05, patience=2, min_lr=0.001,
+
+# %% Model - Training
+n_epochs = 50
+
+# Callbacks
+early_stop = callbacks.EarlyStopping(monitor='val_loss', min_delta=0.025, patience=10, verbose=1)
+reduce_lr = callbacks.ReduceLROnPlateau(monitor='val_loss', min_delta=0.025, patience=5, min_lr=0.001,
                                         factor=0.5, verbose=1)
-model_checker = callbacks.ModelCheckpoint(filepath='models/', monitor='val_accuracy', save_best_only=True,
-                                save_weights_only=True)
-tensorboard = callbacks.TensorBoard(log_dir='logs/')  # tensorboard --logdir=logs/
+model_checker = callbacks.ModelCheckpoint(filepath='models/' + model, monitor='val_accuracy', save_best_only=True,
+                                          save_weights_only=True, verbose=1)
+tensorboard = callbacks.TensorBoard(log_dir='logs/' + model)  # tensorboard --logdir=logs/
 
 model.fit_generator(train_generator, steps_per_epoch=train_generator.samples // batch_size,
                     validation_data=validation_generator,
@@ -62,3 +88,22 @@ model.fit_generator(train_generator, steps_per_epoch=train_generator.samples // 
                     workers=15,
                     use_multiprocessing=True)
 
+
+# %% Model - Predict
+predictions = model.predict_generator(test_generator, steps=test_generator.samples//2, verbose=1,
+                                      workers=15, use_multiprocessing=True)
+
+
+# %% Predictions - Post-processing
+predicted_class = np.argmax(predictions, axis=1)
+filenames = test_generator.filenames
+filenames = [file.split(sep='/')[1].split(sep='.')[0] for file in filenames]
+
+results = pd.DataFrame({"id": filenames,
+                        "label": predicted_class})
+
+results.to_csv('submissions/' + model + '.csv', index=False)
+
+# %% Model - Kaggle evaluation
+subprocess.run('kaggle competitions submit -c histopathologic-cancer-detection -f submissions/' + model + '.csv'
+               ' -m ' + '"' + model + '"', shell=True)
