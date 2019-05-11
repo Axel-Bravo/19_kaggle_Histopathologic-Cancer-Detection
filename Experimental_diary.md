@@ -12,9 +12,9 @@ Basic model with not many CNN layers, neither many complex features
 
 
 ## Model 02
-The assumption made in order to improve the network is to increase the __data augmentation__ procedure. This will be
-done by a usage of more training data than the provided, that means using the _data augmentator_ to generate more 
-images than the original number.
+__More Data__: the assumption made in order to improve the network is to increase the __data augmentation__ procedure.
+This will be done by a usage of more training data than the provided, that means using the _data augmentator_
+to generate more images than the original number.
  
 ### Results: 
 Results show worst results, thus a further understanting of the __augmentator__ working way is recommended.
@@ -22,3 +22,19 @@ Results show worst results, thus a further understanting of the __augmentator__ 
 | Kaggle - Private Score  | Kaggle - Public Score  |  
 |---|---|
 |  0.5450 |  0.5582  |
+
+
+## Model 03
+The assumption made in order to improve the network is to increase the __depth of the convolution__ procedure, 
+in order to extract more deep features from the images, before going into the __dense__ layers. This has been achieved
+by including a __second convolutional__ step before doing the _max pooling_ operation.
+ 
+### Results: 
+Results show a __strong increase__ from the _initial model_ (model 01), making obvious the necessity of a complexer,
+convolutional structure, to __extract meaning from the images__, before going into the dense part. 
+
+| Kaggle - Private Score  | Kaggle - Public Score  |  
+|---|---|
+|  0.6505 |  0.7593  |
+
+

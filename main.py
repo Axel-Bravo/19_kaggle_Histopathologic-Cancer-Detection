@@ -12,7 +12,7 @@ test_dir = "data/test/"
 # Parameters
 batch_size = 64
 input_dimension = (32, 32)
-model_name = 'model_02'
+model_name = 'model_03'
 
 # Train/Val
 train_datagen = ImageDataGenerator(
@@ -56,11 +56,15 @@ test_generator = test_datagen.flow_from_directory(
 # Definition
 model = models.Sequential()
 model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)))
+model.add(layers.Conv2D(32, (3, 3), activation='relu'))
 model.add(layers.MaxPooling2D((2, 2)))
-model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+model.add(layers.Conv2D(32, (3, 3), activation='relu'))
+model.add(layers.Conv2D(32, (3, 3), activation='relu'))
 model.add(layers.MaxPooling2D((2, 2)))
-model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+model.add(layers.Conv2D(32, (3, 3), activation='relu'))
+model.add(layers.Conv2D(32, (3, 3), activation='relu'))
 model.add(layers.Flatten())
+model.add(layers.Dense(128, activation='relu'))
 model.add(layers.BatchNormalization())
 model.add(layers.Dense(64, activation='relu'))
 model.add(layers.BatchNormalization())
@@ -75,7 +79,7 @@ model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['ac
 
 # %% Model - Training
 n_epochs = 50
-data_augmentation_coef = 1.5
+data_augmentation_coef = 1.0
 
 # Callbacks
 early_stop = callbacks.EarlyStopping(monitor='val_loss', min_delta=0.025, patience=10, verbose=1)
