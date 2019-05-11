@@ -25,7 +25,7 @@ Results show worst results, thus a further understanting of the __augmentator__ 
 
 
 ## Model 03
-The assumption made in order to improve the network is to increase the __depth of the convolution__ procedure, 
+__Deeper CNN__: the assumption made in order to improve the network is to increase the __depth of the convolution__ procedure, 
 in order to extract more deep features from the images, before going into the __dense__ layers. This has been achieved
 by including a __second convolutional__ step before doing the _max pooling_ operation.
  
@@ -36,5 +36,4 @@ convolutional structure, to __extract meaning from the images__, before going in
 | Kaggle - Private Score  | Kaggle - Public Score  |  
 |---|---|
 |  0.6505 |  0.7593  |
-
 
