@@ -71,8 +71,25 @@ the resulting model. The dimention will be increased from (32, 32) to (50, 50). 
 on Kaggle.
 
 ### Results:
-Augmenting the size of the input has not resulted into better scores. 
+Augmenting the size of the input has __not resulted__ into better scores. 
 | Kaggle - Private Score  | Kaggle - Public Score  |  
 |---|---|
 |  0.6441 | 0.6825  |
 
+
+## Model 07
+__More CNN filters__: based in the _Model 03_ architecture, we will double the number of __CNNs filters__ from
+32 to 64
+
+### Results:
+Augmenting the size of the number of the CNN filters  has __not resulted__ into better scores. Maybe we need to,
+employe a deeper stack!
+| Kaggle - Private Score  | Kaggle - Public Score  |  
+|---|---|
+|  0.5950 | 0.6595  |
+
+
+## Model 08
+__Deeper CNN filters__: based in the _Model 03_ architecture, we will increase the depth of __CNNs filters__ 
+
+### Results:
