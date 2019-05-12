@@ -49,3 +49,18 @@ of 0.025 has been employed on all layers.
 | Kaggle - Private Score  | Kaggle - Public Score  |  
 |---|---|
 |  0.5037 |  0.5078  |
+
+
+## Model 05
+__Less Regularization__: reduction in the presence of regularized layers, _specifically_ the convolutional one's,
+as well as, the reduction of it's penalization; being this case the default value of __0.01__.
+
+### Results:
+The results have improved, though applying __batch normalization__ and __regularization__ (on the dense layers), 
+__does not__ improve form the _model 03_, which had no _regularization_ neither _batch normalization_. Thus deducing
+from it, that both __batch normalization__ and __regularization__ are useful but _no silver bullet_.
+
+| Kaggle - Private Score  | Kaggle - Public Score  |  
+|---|---|
+|  0.6606 | 0.7486  |
+
