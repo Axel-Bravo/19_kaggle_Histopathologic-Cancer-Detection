@@ -72,6 +72,7 @@ on Kaggle.
 
 ### Results:
 Augmenting the size of the input has __not resulted__ into better scores. 
+
 | Kaggle - Private Score  | Kaggle - Public Score  |  
 |---|---|
 |  0.6441 | 0.6825  |
@@ -84,6 +85,7 @@ __More CNN filters__: based in the _Model 03_ architecture, we will double the n
 ### Results:
 Augmenting the size of the number of the CNN filters  has __not resulted__ into better scores. Maybe we need to,
 employe a deeper stack!
+
 | Kaggle - Private Score  | Kaggle - Public Score  |  
 |---|---|
 |  0.5950 | 0.6595  |
@@ -94,7 +96,31 @@ __Deeper CNN filters__: based in the _Model 03_ architecture, we will increase t
 
 ### Results:
 The augmentation of the depth in the NN has __not resulted__ in better scores.
+
 | Kaggle - Private Score  | Kaggle - Public Score  |  
 |---|---|
-|  0.5950 | 0.6595  |
+|  0.6435 | 0.7059  |
 
+
+## Model 09
+__No image augmentation__: maybe the image augmentation is not helping the network to better predict test images,
+it is not necessary; hence more a burden than an improvement
+
+### Results: 
+ The  cancelation of many image augmentation procedures has caused a __performance increase__, being this one the best
+ score for the moment. The techniques that have been removed are: 
+   - Shear_range=10
+   - Horizontal_flip=True
+   - Vertical_flip=True
+
+This may be due to the fact that, we are training the network to detect cases that are not in the _test set_, meaning, 
+that the training dataset __is already biug enough__ for the prediction task required.  
+
+| Kaggle - Private Score  | Kaggle - Public Score  |  
+|---|---|
+|  0.7413 | 0.7413  |
+
+
+## Future Models:
+ - Crop center of image, i.e., (32, 32), now it's reduction
+ - add dropout in the CNN layers
