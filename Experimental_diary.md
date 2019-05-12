@@ -64,3 +64,15 @@ from it, that both __batch normalization__ and __regularization__ are useful but
 |---|---|
 |  0.6606 | 0.7486  |
 
+
+## Model 06
+__Bigger input images__: maybe the previous reduction of images ought to be something that is reducing the accuracy of 
+the resulting model. The dimention will be increased from (32, 32) to (50, 50). We expect an imprvement of the results
+on Kaggle.
+
+### Results:
+Augmenting the size of the input has not resulted into better scores. 
+| Kaggle - Private Score  | Kaggle - Public Score  |  
+|---|---|
+|  0.6441 | 0.6825  |
+
