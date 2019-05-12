@@ -93,3 +93,8 @@ employe a deeper stack!
 __Deeper CNN filters__: based in the _Model 03_ architecture, we will increase the depth of __CNNs filters__ 
 
 ### Results:
+The augmentation of the depth in the NN has __not resulted__ in better scores.
+| Kaggle - Private Score  | Kaggle - Public Score  |  
+|---|---|
+|  0.5950 | 0.6595  |
+
