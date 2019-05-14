@@ -129,7 +129,7 @@ __SeparableConv2D__: Use Separable Convolution as type in order to improve the a
 |---|---|---|
 |  11 | 0.8036 | 0.8531  |
 |  12 | 0.7833 | 0.8205  |
-
+|  13 | 0.7842 | 0.8507  |
 
 
 ## Future Models:

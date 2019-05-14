@@ -12,7 +12,7 @@ test_dir = "data/test/"
 # Parameters
 batch_size = 64
 input_dimension = (32, 32)
-model_name = 'model_12'
+model_name = 'model_13'
 
 # Train/Val
 train_datagen = ImageDataGenerator(
@@ -50,14 +50,17 @@ test_generator = test_datagen.flow_from_directory(
 
 # Definition
 model = models.Sequential()
-model.add(layers.SeparableConv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3), depth_multiplier=10))
-model.add(layers.SeparableConv2D(32, (3, 3), activation='relu', depth_multiplier=10))
+model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)))
+model.add(layers.Dropout(rate=0.4))
+model.add(layers.Conv2D(32, (3, 3), activation='relu'))
 model.add(layers.MaxPooling2D((2, 2)))
-model.add(layers.SeparableConv2D(64, (3, 3), activation='relu', depth_multiplier=5))
-model.add(layers.SeparableConv2D(64, (3, 3), activation='relu', depth_multiplier=5))
+model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+model.add(layers.Dropout(rate=0.4))
+model.add(layers.Conv2D(64, (3, 3), activation='relu'))
 model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.SeparableConv2D(128, (3, 3), activation='relu', depth_multiplier=5))
 model.add(layers.SeparableConv2D(128, (3, 3), activation='relu', depth_multiplier=5))
+model.add(layers.BatchNormalization())
 model.add(layers.Flatten())
 model.add(layers.Dense(128, activation='relu'))
 model.add(layers.BatchNormalization())
@@ -82,7 +85,7 @@ reduce_lr = callbacks.ReduceLROnPlateau(monitor='val_loss', min_delta=0.025, pat
                                         factor=0.5, verbose=1)
 model_checker = callbacks.ModelCheckpoint(filepath='models/' + model_name, monitor='val_accuracy', save_best_only=True,
                                           save_weights_only=True, verbose=1)
-tensorboard = callbacks.TensorBoard(log_dir='logs/' + model_name)  # tensorboard --logdir=logs/model_12/
+tensorboard = callbacks.TensorBoard(log_dir='logs/' + model_name)  # tensorboard --logdir=logs/model_13/
 
 model.fit_generator(train_generator, steps_per_epoch=train_generator.samples * data_augmentation_coef // batch_size,
                     validation_data=validation_generator,
