@@ -121,13 +121,13 @@ that the training dataset __is already biug enough__ for the prediction task req
 |  0.7413 | 0.7413  |
 
 
-## Model 010
+## Model 011
 __SeparableConv2D__: Use Separable Convolution as type in order to improve the accuracy
 
 ### Results: 
- | Kaggle - Private Score  | Kaggle - Public Score  |  
-|---|---|
-|  0.7617 | 0.7358  |
+| Model  | Kaggle - Private Score  | Kaggle - Public Score  |  
+|---|---|---|
+|  11 | 0.8036 | 0.7358  |
 
 
 ## Future Models:
