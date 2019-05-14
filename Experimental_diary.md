@@ -121,6 +121,15 @@ that the training dataset __is already biug enough__ for the prediction task req
 |  0.7413 | 0.7413  |
 
 
+## Model 010
+__SeparableConv2D__: Use Separable Convolution as type in order to improve the accuracy
+
+### Results: 
+ | Kaggle - Private Score  | Kaggle - Public Score  |  
+|---|---|
+|  0.7617 | 0.7358  |
+
+
 ## Future Models:
  - Crop center of image, i.e., (32, 32), now it's reduction
  - add dropout in the CNN layers
