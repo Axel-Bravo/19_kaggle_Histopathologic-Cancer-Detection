@@ -134,6 +134,10 @@ __SeparableConv2D__: Use Separable Convolution as type in order to improve the a
 
 ## Model 014
 __Transfer Learning__: Use a pre-trained NN in order to profit from it's CNN part
+Model:
+ - _Model 14_: MobileNetV2, standalone, freezed
+ - _Model 15_: MobileNetV2, 100 first layers frozen, 55 remaining layers trained  
+ - _Model 16_: Model 14 + Model 15
 
 
 ### Results: 
@@ -141,8 +145,14 @@ __Transfer Learning__: Use a pre-trained NN in order to profit from it's CNN par
 | Model  | Kaggle - Private Score  | Kaggle - Public Score  |  
 |---|---|---|
 |  14 | 0.7415 | 0.8091  |
+|  15 | 0.7567 | 0.7342  |
+|  16 | 0.7597 | 0.8527  |
 
 
 ## Future Models:
+- doble phase primero bloqueado (usar network input mas pequeño)
+    - despues desbloqueado (quitando capas)
+    - el Pruneador
+
  - Crop center of image, i.e., (32, 32), now it's reduction
- - add dropout in the CNN layers
+ - WideResNet
