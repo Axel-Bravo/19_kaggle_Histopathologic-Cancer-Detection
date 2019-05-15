@@ -2,6 +2,7 @@
 import subprocess
 import numpy as np
 import pandas as pd
+import tensorflow as tf
 from tensorflow.keras import callbacks, layers, models, optimizers, regularizers
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
@@ -11,8 +12,8 @@ test_dir = "data/test/"
 
 # Parameters
 batch_size = 64
-input_dimension = (32, 32)
-model_name = 'model_13'
+input_dimension = (96, 96)
+model_name = 'model_14'
 
 # Train/Val
 train_datagen = ImageDataGenerator(
@@ -47,20 +48,16 @@ test_generator = test_datagen.flow_from_directory(
 
 
 # %% Model - Initialization
+base_model = tf.keras.applications.MobileNetV2(input_shape=(*input_dimension, 3),
+                                               include_top=False,
+                                               weights='imagenet')
 
-# Definition
-model = models.Sequential()
-model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)))
-model.add(layers.Dropout(rate=0.4))
-model.add(layers.Conv2D(32, (3, 3), activation='relu'))
-model.add(layers.MaxPooling2D((2, 2)))
-model.add(layers.Conv2D(64, (3, 3), activation='relu'))
-model.add(layers.Dropout(rate=0.4))
-model.add(layers.Conv2D(64, (3, 3), activation='relu'))
-model.add(layers.MaxPooling2D((2, 2)))
-model.add(layers.SeparableConv2D(128, (3, 3), activation='relu', depth_multiplier=5))
-model.add(layers.SeparableConv2D(128, (3, 3), activation='relu', depth_multiplier=5))
-model.add(layers.BatchNormalization())
+base_model.trainable = False
+base_model.summary()
+
+
+model = tf.keras.Sequential()
+model.add(base_model)
 model.add(layers.Flatten())
 model.add(layers.Dense(128, activation='relu'))
 model.add(layers.BatchNormalization())
@@ -69,6 +66,7 @@ model.add(layers.BatchNormalization())
 model.add(layers.Dense(12, activation='relu'))
 model.add(layers.Dense(2, activation='softmax'))
 model.summary()
+
 
 # Compile
 optimizer = optimizers.RMSprop(learning_rate=0.001)
@@ -81,7 +79,7 @@ data_augmentation_coef = 1.0
 
 # Callbacks
 early_stop = callbacks.EarlyStopping(monitor='val_loss', min_delta=0.025, patience=10, verbose=1)
-reduce_lr = callbacks.ReduceLROnPlateau(monitor='val_loss', min_delta=0.025, patience=5, min_lr=0.001,
+reduce_lr = callbacks.ReduceLROnPlateau(monitor='val_loss', min_delta=0.025, patience=5, min_lr=0.0001,
                                         factor=0.5, verbose=1)
 model_checker = callbacks.ModelCheckpoint(filepath='models/' + model_name, monitor='val_accuracy', save_best_only=True,
                                           save_weights_only=True, verbose=1)
