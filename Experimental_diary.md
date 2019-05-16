@@ -132,7 +132,7 @@ __SeparableConv2D__: Use Separable Convolution as type in order to improve the a
 |  13 | 0.7842 | 0.8507  |
 
 
-## Model 014
+## Model 014, 015, 016, 017
 __Transfer Learning__: Use a pre-trained NN in order to profit from it's CNN part
 Model:
  - _Model 14_: MobileNetV2, standalone, freezed
@@ -150,10 +150,16 @@ Model:
 |  17 | 0.6991 | 0.7103  |
 
 
+## Model 018
+__WideResNet__: inspired implementation. Not fully based due to:
+ - Being not able with Keras of doing the __advanced__ conection between layers
+ - Being WideResNet too __deep__ for the problem issued
+
+
 ## Future Models:
 - doble phase primero bloqueado (usar network input mas pequeño)
     - despues desbloqueado (quitando capas)
     - el Pruneador
 
- - Crop center of image, i.e., (32, 32), now it's reduction
- - WideResNet
+ - Crop center of image, i.e., (32, 32), now it's reduction "Cropping2D"
+
