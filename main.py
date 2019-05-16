@@ -12,8 +12,8 @@ test_dir = "data/test/"
 
 # Parameters
 batch_size = 64
-input_dimension = (96, 96)
-model_name = 'model_16'
+input_dimension = (32, 32)
+model_name = 'model_17'
 
 # Train/Val
 train_datagen = ImageDataGenerator(
@@ -48,10 +48,10 @@ test_generator = test_datagen.flow_from_directory(
 
 
 # %% Model - Initialization - Phase I
-base_model = tf.keras.applications.MobileNetV2(input_shape=(*input_dimension, 3),
+base_model = tf.keras.applications.VGG16(input_shape=(*input_dimension, 3),
                                                include_top=False,
                                                weights='imagenet')
-
+tensorboard --logdir=logs/model_16/
 base_model.trainable = False
 
 model = tf.keras.Sequential()
@@ -59,9 +59,12 @@ model.add(base_model)
 model.add(layers.Flatten())
 model.add(layers.Dense(128, activation='relu'))
 model.add(layers.BatchNormalization())
+model.add(layers.Dropout(0.4))
 model.add(layers.Dense(64, activation='relu'))
 model.add(layers.BatchNormalization())
+model.add(layers.Dropout(0.4))
 model.add(layers.Dense(12, activation='relu'))
+model.add(layers.BatchNormalization())
 model.add(layers.Dense(2, activation='softmax'))
 model.summary()
 
@@ -76,11 +79,11 @@ data_augmentation_coef = 1.0
 
 # Callbacks
 early_stop = callbacks.EarlyStopping(monitor='val_loss', min_delta=0.025, patience=10, verbose=1)
-reduce_lr = callbacks.ReduceLROnPlateau(monitor='val_loss', min_delta=0.025, patience=5, min_lr=0.0001,
-                                        factor=0.5, verbose=1)
+reduce_lr = callbacks.ReduceLROnPlateau(monitor='val_loss', min_delta=0.025, patience=4, min_lr=0.0001,
+                                        factor=0.75, verbose=1)
 model_checker = callbacks.ModelCheckpoint(filepath='models/' + model_name, monitor='val_accuracy', save_best_only=True,
                                           save_weights_only=True, verbose=1)
-tensorboard = callbacks.TensorBoard(log_dir='logs/' + model_name)  # tensorboard --logdir=logs/model_16/
+tensorboard = callbacks.TensorBoard(log_dir='logs/' + model_name)  # tensorboard --logdir=logs/model_17/
 
 model.fit_generator(train_generator, steps_per_epoch=train_generator.samples * data_augmentation_coef // batch_size,
                     validation_data=validation_generator,
@@ -95,7 +98,7 @@ model.fit_generator(train_generator, steps_per_epoch=train_generator.samples * d
 base_model.trainable = True
 print("Number of layers in the base model: ", len(base_model.layers))
 
-fine_tune_at = 100
+fine_tune_at = 8
 # Freeze all the layers before the `fine_tune_at` layer
 for layer in base_model.layers[:fine_tune_at]:
     layer.trainable = False
@@ -115,7 +118,7 @@ reduce_lr = callbacks.ReduceLROnPlateau(monitor='val_loss', min_delta=0.025, pat
                                         factor=0.5, verbose=1)
 model_checker = callbacks.ModelCheckpoint(filepath='models/' + model_name, monitor='val_accuracy', save_best_only=True,
                                           save_weights_only=True, verbose=1)
-tensorboard = callbacks.TensorBoard(log_dir='logs/' + model_name)  # tensorboard --logdir=logs/model_15/
+tensorboard = callbacks.TensorBoard(log_dir='logs/' + model_name)  # tensorboard --logdir=logs/model_17/
 
 model.fit_generator(train_generator, steps_per_epoch=train_generator.samples * data_augmentation_coef // batch_size,
                     validation_data=validation_generator,

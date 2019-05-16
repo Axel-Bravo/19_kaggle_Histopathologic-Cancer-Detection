@@ -138,7 +138,7 @@ Model:
  - _Model 14_: MobileNetV2, standalone, freezed
  - _Model 15_: MobileNetV2, 100 first layers frozen, 55 remaining layers trained  
  - _Model 16_: Model 14 + Model 15
-
+ - _Model 17_: VGG19, procedure Model 16
 
 ### Results: 
 
@@ -147,6 +147,7 @@ Model:
 |  14 | 0.7415 | 0.8091  |
 |  15 | 0.7567 | 0.7342  |
 |  16 | 0.7597 | 0.8527  |
+|  17 | 0.6991 | 0.7103  |
 
 
 ## Future Models:
