@@ -154,12 +154,26 @@ Model:
 __WideResNet__: inspired implementation. Not fully based due to:
  - Being not able with Keras of doing the __advanced__ conection between layers
  - Being WideResNet too __deep__ for the problem issued
+ 
+ ### Results: 
+ 
+ | Model  | Kaggle - Private Score  | Kaggle - Public Score  |  
+|---|---|---|
+|  18| 0.7416 | 0.7979  |
 
 
-## Future Models:
-- doble phase primero bloqueado (usar network input mas pequeño)
-    - despues desbloqueado (quitando capas)
-    - el Pruneador
+## Model 019
+__Deep CNN Pancake__: based on the inspiration of the WideResNEt, this network is much more deep and with many more 
+convolutional elements. 
 
- - Crop center of image, i.e., (32, 32), now it's reduction "Cropping2D"
+ ### Results: 
+ 
+ | Model  | Kaggle - Private Score  | Kaggle - Public Score  |  
+|---|---|---|
+|  18| 0.8186 | 0.8803  |
+
+
+
+
+
 

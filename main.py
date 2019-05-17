@@ -1,4 +1,4 @@
-# %% Imports and functions
+#%% Imports and functions
 import subprocess
 import numpy as np
 import pandas as pd
@@ -12,8 +12,8 @@ test_dir = "data/test/"
 
 # Parameters
 batch_size = 64
-input_dimension = (32, 32)
-model_name = 'model_18'
+input_dimension = (90, 90)
+model_name = 'model_19'
 
 # Train/Val
 train_datagen = ImageDataGenerator(
@@ -52,59 +52,73 @@ test_generator = test_datagen.flow_from_directory(
 # Conv(size, input_channels, output_channels, strides=1
 ## Group - 1
 model = tf.keras.Sequential()
-model.add(layers.Conv2D(filters=16, kernel_size=(3, 3), strides=1))
+model.add(layers.Conv2D(input_shape=(*input_dimension, 3), filters=64, kernel_size=(3, 3), strides=1))
 model.add(layers.BatchNormalization())
 model.add(layers.ReLU())
-model.add(layers.Conv2D(filters=96, kernel_size=(3, 3), strides=1))
+model.add(layers.Conv2D(filters=64, kernel_size=(3, 3), strides=1))
 model.add(layers.BatchNormalization())
 model.add(layers.ReLU())
-model.add(layers.Conv2D(filters=96, kernel_size=(3, 3), strides=1))
+model.add(layers.Conv2D(filters=64, kernel_size=(3, 3), strides=1))
 model.add(layers.BatchNormalization())
 model.add(layers.ReLU())
-model.add(layers.Conv2D(filters=96, kernel_size=(3, 3), strides=1))
+model.add(layers.Dropout(0.5))
+model.add(layers.Conv2D(filters=64, kernel_size=(3, 3), strides=1))
 model.add(layers.BatchNormalization())
 model.add(layers.ReLU())
-model.add(layers.Conv2D(filters=96, kernel_size=(3, 3), strides=1))
+model.add(layers.Dropout(0.5))
+model.add(layers.AvgPool2D())
+model.add(layers.Conv2D(filters=64, kernel_size=(3, 3), strides=1))
 model.add(layers.BatchNormalization())
 model.add(layers.ReLU())
-model.add(layers.Conv2D(filters=96, kernel_size=(3, 3), strides=1))
+model.add(layers.Dropout(0.5))
+model.add(layers.Conv2D(filters=64, kernel_size=(3, 3), strides=1))
 model.add(layers.BatchNormalization())
 model.add(layers.ReLU())
+model.add(layers.Dropout(0.5))
+model.add(layers.MaxPool2D())
+
 ## Group - 2
-model.add(layers.Conv2D(filters=192, kernel_size=(3, 3), strides=1))
+model.add(layers.Conv2D(filters=128, kernel_size=(3, 3), strides=1))
 model.add(layers.BatchNormalization())
 model.add(layers.ReLU())
-model.add(layers.Conv2D(filters=192, kernel_size=(3, 3), strides=1))
+model.add(layers.Dropout(0.5))
+model.add(layers.Conv2D(filters=128, kernel_size=(3, 3), strides=1))
 model.add(layers.BatchNormalization())
 model.add(layers.ReLU())
-model.add(layers.Conv2D(filters=192, kernel_size=(3, 3), strides=1))
+model.add(layers.Dropout(0.5))
+model.add(layers.Conv2D(filters=128, kernel_size=(3, 3), strides=1))
 model.add(layers.BatchNormalization())
 model.add(layers.ReLU())
-model.add(layers.Conv2D(filters=192, kernel_size=(3, 3), strides=1))
+model.add(layers.Dropout(0.5))
+model.add(layers.Conv2D(filters=128, kernel_size=(3, 3), strides=1))
 model.add(layers.BatchNormalization())
 model.add(layers.ReLU())
-model.add(layers.Conv2D(filters=192, kernel_size=(3, 3), strides=1))
+model.add(layers.Dropout(0.5))
+model.add(layers.Conv2D(filters=128, kernel_size=(3, 3), strides=1))
 model.add(layers.BatchNormalization())
 model.add(layers.ReLU())
-model.add(layers.Conv2D(filters=192, kernel_size=(3, 3), strides=1))
+model.add(layers.Dropout(0.5))
+model.add(layers.Conv2D(filters=128, kernel_size=(3, 3), strides=1))
 model.add(layers.BatchNormalization())
 model.add(layers.ReLU())
-model.add(layers.GlobalAvgPool2D())
+model.add(layers.Dropout(0.5))
+
 ## Group - Dense
 model.add(layers.Flatten())
 model.add(layers.Dense(128, activation='relu'))
 model.add(layers.BatchNormalization())
-model.add(layers.Dropout(0.4))
+model.add(layers.Dropout(0.5))
 model.add(layers.Dense(64, activation='relu'))
 model.add(layers.BatchNormalization())
-model.add(layers.Dropout(0.4))
+model.add(layers.Dropout(0.5))
 model.add(layers.Dense(12, activation='relu'))
 model.add(layers.BatchNormalization())
 model.add(layers.Dense(2, activation='softmax'))
 
+model.summary()
 
 # Compile
-optimizer = optimizers.RMSprop(learning_rate=0.0005)
+optimizer = optimizers.RMSprop(learning_rate=0.005)
 model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
 
@@ -118,7 +132,7 @@ reduce_lr = callbacks.ReduceLROnPlateau(monitor='val_loss', min_delta=0.025, pat
                                         factor=0.5, verbose=1)
 model_checker = callbacks.ModelCheckpoint(filepath='models/' + model_name, monitor='val_accuracy', save_best_only=True,
                                           save_weights_only=True, verbose=1)
-tensorboard = callbacks.TensorBoard(log_dir='logs/' + model_name)  # tensorboard --logdir=logs/model_18/
+tensorboard = callbacks.TensorBoard(log_dir='logs/' + model_name)  # tensorboard --logdir=logs/model_19/
 
 model.fit_generator(train_generator, steps_per_epoch=train_generator.samples * data_augmentation_coef // batch_size,
                     validation_data=validation_generator,
