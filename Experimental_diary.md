@@ -172,9 +172,6 @@ convolutional elements.
 |---|---|---|
 |  19| 0.8186 | 0.8803  |
 |  20| 0.8822 | 0.9447  |
+|  21| 0.8981 | 0.9510  |
 
-
-
-## Future
- - repetir modelo 19 con el, best model = True
 
