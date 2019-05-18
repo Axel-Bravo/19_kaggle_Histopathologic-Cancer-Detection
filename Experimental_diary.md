@@ -162,7 +162,7 @@ __WideResNet__: inspired implementation. Not fully based due to:
 |  18| 0.7416 | 0.7979  |
 
 
-## Model 019
+## Model 019, 20 
 __Deep CNN Pancake__: based on the inspiration of the WideResNEt, this network is much more deep and with many more 
 convolutional elements. 
 
@@ -170,10 +170,11 @@ convolutional elements.
  
  | Model  | Kaggle - Private Score  | Kaggle - Public Score  |  
 |---|---|---|
-|  18| 0.8186 | 0.8803  |
+|  19| 0.8186 | 0.8803  |
+|  20| 0.8822 | 0.9447  |
 
 
 
-
-
+## Future
+ - repetir modelo 19 con el, best model = True
 

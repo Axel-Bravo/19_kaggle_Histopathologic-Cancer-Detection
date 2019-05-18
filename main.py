@@ -11,9 +11,17 @@ train_dir = "data/train/"
 test_dir = "data/test/"
 
 # Parameters
-batch_size = 64
-input_dimension = (90, 90)
-model_name = 'model_19'
+batch_size = 128
+input_dimension = (94, 94)
+kernel_size = (3, 3)
+pool_size = (2, 2)
+first_filters = 32
+second_filters = 64
+third_filters = 128
+dropout_conv = 0.5
+dropout_dense = 0.6
+
+model_name = 'model_20'
 
 # Train/Val
 train_datagen = ImageDataGenerator(
@@ -25,7 +33,7 @@ train_generator = train_datagen.flow_from_directory(
     target_size=input_dimension,
     color_mode="rgb",
     batch_size=batch_size,
-    class_mode='categorical',
+    class_mode='binary',
     subset='training')
 
 validation_generator = train_datagen.flow_from_directory(
@@ -33,7 +41,7 @@ validation_generator = train_datagen.flow_from_directory(
     target_size=input_dimension,
     color_mode="rgb",
     batch_size=batch_size,
-    class_mode='categorical',
+    class_mode='binary',
     subset='validation')
 
 # Test
@@ -49,77 +57,58 @@ test_generator = test_datagen.flow_from_directory(
 
 # %% Model - Initialization
 
-# Conv(size, input_channels, output_channels, strides=1
-## Group - 1
+# CNNs I
 model = tf.keras.Sequential()
-model.add(layers.Conv2D(input_shape=(*input_dimension, 3), filters=64, kernel_size=(3, 3), strides=1))
+model.add(layers.Conv2D(input_shape=(*input_dimension, 3), filters=first_filters, kernel_size=kernel_size, strides=1))
+model.add(layers.BatchNormalization())
+model.add(layers.Conv2D(input_shape=(*input_dimension, 3), filters=first_filters, kernel_size=kernel_size, strides=1))
 model.add(layers.BatchNormalization())
 model.add(layers.ReLU())
-model.add(layers.Conv2D(filters=64, kernel_size=(3, 3), strides=1))
+model.add(layers.Conv2D(filters=first_filters, kernel_size=kernel_size, strides=1))
 model.add(layers.BatchNormalization())
 model.add(layers.ReLU())
-model.add(layers.Conv2D(filters=64, kernel_size=(3, 3), strides=1))
+model.add(layers.MaxPool2D(pool_size=pool_size))
+# CNNs II
+model.add(layers.Conv2D(filters=second_filters, kernel_size=kernel_size, strides=1))
+model.add(layers.BatchNormalization())
+model.add(layers.Conv2D(filters=second_filters, kernel_size=kernel_size, strides=1))
 model.add(layers.BatchNormalization())
 model.add(layers.ReLU())
-model.add(layers.Dropout(0.5))
-model.add(layers.Conv2D(filters=64, kernel_size=(3, 3), strides=1))
+model.add(layers.Dropout(dropout_conv))
+model.add(layers.Conv2D(filters=second_filters, kernel_size=kernel_size, strides=1))
 model.add(layers.BatchNormalization())
 model.add(layers.ReLU())
-model.add(layers.Dropout(0.5))
-model.add(layers.AvgPool2D())
-model.add(layers.Conv2D(filters=64, kernel_size=(3, 3), strides=1))
+model.add(layers.Dropout(dropout_conv))
+model.add(layers.MaxPool2D(pool_size=pool_size))
+# CNNs III
+model.add(layers.Conv2D(filters=third_filters, kernel_size=kernel_size, strides=1))
+model.add(layers.BatchNormalization())
+model.add(layers.Conv2D(filters=third_filters, kernel_size=kernel_size, strides=1))
 model.add(layers.BatchNormalization())
 model.add(layers.ReLU())
-model.add(layers.Dropout(0.5))
-model.add(layers.Conv2D(filters=64, kernel_size=(3, 3), strides=1))
+model.add(layers.Dropout(dropout_conv))
+model.add(layers.Conv2D(filters=third_filters, kernel_size=kernel_size, strides=1))
 model.add(layers.BatchNormalization())
 model.add(layers.ReLU())
-model.add(layers.Dropout(0.5))
-model.add(layers.MaxPool2D())
-
-## Group - 2
-model.add(layers.Conv2D(filters=128, kernel_size=(3, 3), strides=1))
-model.add(layers.BatchNormalization())
-model.add(layers.ReLU())
-model.add(layers.Dropout(0.5))
-model.add(layers.Conv2D(filters=128, kernel_size=(3, 3), strides=1))
-model.add(layers.BatchNormalization())
-model.add(layers.ReLU())
-model.add(layers.Dropout(0.5))
-model.add(layers.Conv2D(filters=128, kernel_size=(3, 3), strides=1))
-model.add(layers.BatchNormalization())
-model.add(layers.ReLU())
-model.add(layers.Dropout(0.5))
-model.add(layers.Conv2D(filters=128, kernel_size=(3, 3), strides=1))
-model.add(layers.BatchNormalization())
-model.add(layers.ReLU())
-model.add(layers.Dropout(0.5))
-model.add(layers.Conv2D(filters=128, kernel_size=(3, 3), strides=1))
-model.add(layers.BatchNormalization())
-model.add(layers.ReLU())
-model.add(layers.Dropout(0.5))
-model.add(layers.Conv2D(filters=128, kernel_size=(3, 3), strides=1))
-model.add(layers.BatchNormalization())
-model.add(layers.ReLU())
-model.add(layers.Dropout(0.5))
-
-## Group - Dense
+model.add(layers.Dropout(dropout_conv))
+model.add(layers.MaxPool2D(pool_size=pool_size))
+# Dense
 model.add(layers.Flatten())
+model.add(layers.Dense(256, activation='relu'))
+model.add(layers.BatchNormalization())
+model.add(layers.Dropout(dropout_dense))
 model.add(layers.Dense(128, activation='relu'))
 model.add(layers.BatchNormalization())
-model.add(layers.Dropout(0.5))
-model.add(layers.Dense(64, activation='relu'))
+model.add(layers.Dropout(dropout_dense))
+model.add(layers.Dense(32, activation='relu'))
 model.add(layers.BatchNormalization())
-model.add(layers.Dropout(0.5))
-model.add(layers.Dense(12, activation='relu'))
-model.add(layers.BatchNormalization())
-model.add(layers.Dense(2, activation='softmax'))
+model.add(layers.Dense(1, activation='sigmoid'))
 
 model.summary()
 
 # Compile
 optimizer = optimizers.RMSprop(learning_rate=0.005)
-model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
+model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['accuracy'])
 
 
 # %% Model - Training
@@ -127,12 +116,13 @@ n_epochs = 50
 data_augmentation_coef = 1.0
 
 # Callbacks
-early_stop = callbacks.EarlyStopping(monitor='val_loss', min_delta=0.025, patience=10, verbose=1)
+early_stop = callbacks.EarlyStopping(monitor='val_loss', min_delta=0.025, patience=10, restore_best_weights=True,
+                                     verbose=1)
 reduce_lr = callbacks.ReduceLROnPlateau(monitor='val_loss', min_delta=0.025, patience=5, min_lr=0.00001,
                                         factor=0.5, verbose=1)
 model_checker = callbacks.ModelCheckpoint(filepath='models/' + model_name, monitor='val_accuracy', save_best_only=True,
                                           save_weights_only=True, verbose=1)
-tensorboard = callbacks.TensorBoard(log_dir='logs/' + model_name)  # tensorboard --logdir=logs/model_19/
+tensorboard = callbacks.TensorBoard(log_dir='logs/' + model_name)  # tensorboard --logdir=logs/model_20/
 
 model.fit_generator(train_generator, steps_per_epoch=train_generator.samples * data_augmentation_coef // batch_size,
                     validation_data=validation_generator,
@@ -149,12 +139,11 @@ predictions = model.predict_generator(test_generator, steps=test_generator.sampl
 
 
 # %% Predictions - Post-processing
-predicted_class = np.argmax(predictions, axis=1)
 filenames = test_generator.filenames
 filenames = [file.split(sep='/')[1].split(sep='.')[0] for file in filenames]
 
 results = pd.DataFrame({"id": filenames,
-                        "label": predicted_class})
+                        "label": predictions.ravel()})
 
 results.to_csv('submissions/' + model_name + '.csv', index=False)
 
