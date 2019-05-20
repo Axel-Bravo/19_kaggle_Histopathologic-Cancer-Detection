@@ -128,8 +128,12 @@ early_stop = callbacks.EarlyStopping(monitor='val_loss', min_delta=0.025, patien
                                      verbose=1)
 reduce_lr = callbacks.ReduceLROnPlateau(monitor='val_loss', min_delta=0.025, patience=5, min_lr=0.00001,
                                         factor=0.5, verbose=1)
-model_checker = callbacks.ModelCheckpoint(filepath='models/' + model_name, monitor='val_accuracy', save_best_only=True,
-                                          save_weights_only=True, verbose=1)
+model_checker = callbacks.ModelCheckpoint(filepath='models/' + model_name + '__{epoch:02d}-{val_loss:.2f}.hdf5',
+                                          monitor='val_accuracy',
+                                          save_best_only=True,
+                                          save_weights_only=False,
+                                          verbose=1)
+
 tensorboard = callbacks.TensorBoard(log_dir='logs/' + model_name)  # tensorboard --logdir=logs/model_21/
 
 model.fit_generator(train_generator, steps_per_epoch=train_generator.samples * data_augmentation_coef // batch_size,
