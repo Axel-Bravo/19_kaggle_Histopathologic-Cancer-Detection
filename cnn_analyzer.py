@@ -1,8 +1,17 @@
 #%% Imports and functions
-import pandas as pd
-import matplotlib.pyplot as plt
 import tensorflow as tf
+import matplotlib.pyplot as plt
+from vis.visualization import visualize_activation
+from vis.utils import utils
+from tensorflow.keras import activations
+from tensorflow.keras import applications
 from tensorflow.keras import callbacks, layers, models, optimizers, regularizers
+import keras
+from keras.models import load_model
+from keras.utils import CustomObjectScope
+from keras.initializers import glorot_uniform
+
+
 
 
 def get_layers_info(model) -> dict:
@@ -32,7 +41,9 @@ def get_layers_weights(model) -> dict:
 
 
 #%% Load Best model
-model = models.load_model('models/model_21__32-0.15.hdf5')
+
+with CustomObjectScope({'GlorotUniform': glorot_uniform()}):
+    model = tf.keras.models.load_model('models/model_21__32-0.15.hdf5')
 model.summary()
 
 layers_info = get_layers_weights(model=model)
@@ -55,4 +66,15 @@ plt.show()
 
 
 #%% Activation Maximization
+plt.rcParams['figure.figsize'] = (18,6)
 
+#finding out the layer index using layer name
+#the find_layer_idx function accepts the model and name of layer as parameters and return the index of respective layer
+layer_idx = utils.find_layer_idx(model, 'dense_3')
+#changing the activation of the layer to linear
+model.layers[layer_idx].activation = activations.linear
+#applying modifications to the model
+model = utils.apply_modifications(model)
+#Indian elephant
+img3 = visualize_activation(model,layer_idx,filter_indices=1,max_iter=5000,verbose=True)
+plt.imshow(img3)
